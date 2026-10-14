@@ -17,6 +17,11 @@ database_id = "7a864a7f-0f54-4b5f-b437-84e04c2876a5"  # 需要替换为您的实
 [vars]
 VITE_EMAIL_DOMAIN = "mail.niubige.top"   # 替换为您的域名列表，多个域名使用逗号 , 分割。这里的域名只是用来网页上展示，方便复制粘贴使用。
 
+# API 访问密钥 LUCKMAIL_API_KEY 不在这里配置：
+# 生产环境在 Cloudflare Dashboard「设置 → 运行时变量和密钥」中以「密钥」类型添加，
+# 本地开发在项目根目录 .dev.vars 中配置（该文件已被 .gitignore 忽略）。
+# 所有 /api/* 接口必须携带此密钥（Authorization: Bearer / X-API-Key / ?key=）。
+
 # 配置邮件处理
 [triggers]
 crons = ["0 * * * *"]  # 每小时运行一次清理任务

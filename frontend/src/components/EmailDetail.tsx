@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { API_BASE_URL } from '../config';
+import { getEmailDetail, getEmailAttachments, deleteEmail, buildAttachmentUrl } from '../utils/api';
 import { MailboxContext } from '../contexts/MailboxContext';
 
 interface EmailDetailProps {
@@ -59,31 +59,26 @@ const EmailDetail: React.FC<EmailDetailProps> = ({ emailId, onClose }) => {
         }
         
         setIsLoading(true);
-        const response = await fetch(`${API_BASE_URL}/api/emails/${emailId}`);
-        
-        if (!response.ok) {
-          // 如果邮箱不存在（404），则清除本地缓存并创建新邮箱
-          if (response.status === 404) {
+        const result = await getEmailDetail(emailId);
+
+        if (result.success && result.email) {
+          setEmail(result.email);
+
+          // 如果邮件有附件，获取附件列表
+          if (result.email.hasAttachments) {
+            await fetchAttachments(emailId, result.email);
+          } else {
+            // 没有附件，将邮件添加到缓存
+            addToEmailCache(emailId, result.email, []);
+          }
+        } else {
+          // 如果邮件不存在（404），则清除本地缓存并创建新邮箱
+          if (result.notFound) {
             await handleMailboxNotFound();
             onClose(); // 关闭邮件详情
             return;
           }
-          throw new Error('Failed to fetch email');
-        }
-        
-        const data = await response.json();
-        if (data.success) {
-          setEmail(data.email);
-          
-          // 如果邮件有附件，获取附件列表
-          if (data.email.hasAttachments) {
-            await fetchAttachments(emailId, data.email);
-          } else {
-            // 没有附件，将邮件添加到缓存
-            addToEmailCache(emailId, data.email, []);
-          }
-        } else {
-          throw new Error(data.error || 'Unknown error');
+          throw new Error(result.error ? String(result.error) : 'Failed to fetch email');
         }
       } catch (error) {
         setErrorMessage(t('email.fetchFailed'));
@@ -106,28 +101,23 @@ const EmailDetail: React.FC<EmailDetailProps> = ({ emailId, onClose }) => {
   const fetchAttachments = async (emailId: string, emailData?: Email) => {
     try {
       setIsLoadingAttachments(true);
-      const response = await fetch(`${API_BASE_URL}/api/emails/${emailId}/attachments`);
-      
-      if (!response.ok) {
-        // 如果邮箱不存在（404），则清除本地缓存并创建新邮箱
-        if (response.status === 404) {
+      const result = await getEmailAttachments(emailId);
+
+      if (result.success && result.attachments) {
+        setAttachments(result.attachments);
+
+        // 将邮件和附件添加到缓存
+        if (emailData) {
+          addToEmailCache(emailId, emailData, result.attachments);
+        }
+      } else {
+        // 如果邮件不存在（404），则清除本地缓存并创建新邮箱
+        if (result.notFound) {
           await handleMailboxNotFound();
           onClose(); // 关闭邮件详情
           return;
         }
-        throw new Error('Failed to fetch attachments');
-      }
-      
-      const data = await response.json();
-      if (data.success) {
-        setAttachments(data.attachments);
-        
-        // 将邮件和附件添加到缓存
-        if (emailData) {
-          addToEmailCache(emailId, emailData, data.attachments);
-        }
-      } else {
-        throw new Error(data.error || 'Unknown error');
+        throw new Error(result.error ? String(result.error) : 'Failed to fetch attachments');
       }
     } catch (error) {
       console.error('Error fetching attachments:', error);
@@ -142,16 +132,8 @@ const EmailDetail: React.FC<EmailDetailProps> = ({ emailId, onClose }) => {
       setErrorMessage(null);
       setSuccessMessage(null);
       
-      const response = await fetch(`${API_BASE_URL}/api/emails/${emailId}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete email');
-      }
-      
-      const data = await response.json();
-      if (data.success) {
+      const result = await deleteEmail(emailId);
+      if (result.success) {
         setSuccessMessage(t('email.deleteSuccess'));
         
         // 2秒后关闭邮件详情
@@ -162,7 +144,7 @@ const EmailDetail: React.FC<EmailDetailProps> = ({ emailId, onClose }) => {
           onClose();
         }, 2000);
       } else {
-        throw new Error(data.error || 'Unknown error');
+        throw new Error(result.error ? String(result.error) : 'Failed to delete email');
       }
     } catch (error) {
       setErrorMessage(t('email.deleteFailed'));
@@ -223,10 +205,8 @@ const EmailDetail: React.FC<EmailDetailProps> = ({ emailId, onClose }) => {
     }
   };
   
-  // 获取附件下载链接
-  const getAttachmentUrl = (attachmentId: string, download: boolean = false): string => {
-    return `${API_BASE_URL}/api/attachments/${attachmentId}${download ? '?download=true' : ''}`;
-  };
+  // 获取附件下载链接（浏览器原生加载无法携带请求头，由 api 层通过 ?key= 查询参数传递密钥）
+  const getAttachmentUrl = buildAttachmentUrl;
   
   // 渲染附件预览
   const renderAttachmentPreview = (attachment: Attachment) => {

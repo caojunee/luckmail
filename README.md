@@ -1,44 +1,20 @@
-# <div align="center">🚀 ZMAIL - 24小时临时邮箱服务</div>
+# <div align="center">🚀 LuckMail - 24小时临时邮箱服务</div>
 
 <div align="center">
-  <p>
-    <a href="./README.en.md">English</a> | <strong>简体中文</strong>
-  </p>
 
-  <p>如果这个项目对您有帮助，请考虑给它一个 ⭐️ Star ⭐️，这将是对我最大的鼓励！</p>
-
-  <img src="frontend/public/favicon.svg" alt="ZMAIL Logo" width="120" height="120" style="background-color: #4f46e5; padding: 20px; border-radius: 12px; margin: 20px 0;">
+  <img src="frontend/public/favicon.svg" alt="LuckMail Logo" width="120" height="120" style="background-color: #4f46e5; padding: 20px; border-radius: 12px; margin: 20px 0;">
 
   <h3>💌 安全、简单、即用即走的临时邮箱服务</h3>
 
   <p>
-    <a href="https://mail.mdzz.uk" target="_blank"><strong>🌐 在线体验</strong></a> •
     <a href="#功能特点"><strong>✨ 功能特点</strong></a> •
     <a href="#快速部署"><strong>🚀 快速部署</strong></a> •
-    <a href="#本地开发"><strong>💻 本地开发</strong></a> •
-    <a href="#技术栈"><strong>🔧 技术栈</strong></a>
+    <a href="#-访问密钥api-鉴权"><strong>🔑 访问密钥</strong></a> •
+    <a href="#-本地开发"><strong>💻 本地开发</strong></a> •
+    <a href="#-技术栈"><strong>🔧 技术栈</strong></a>
   </p>
 
 </div>
-
----
-
-## 📹 视频教程
-
-1. **项目介绍与功能演示**
-2. **一体化 Worker 部署到 Cloudflare 的详细步骤**
-3. **Fork 项目并自定义配置的方法**
-4. **配置 Cloudflare Email 路由**
-5. **设置环境变量与 D1 数据库**
-
-Youtube 视频地址： https://youtu.be/XR5TV4C3D5E
-
----
-
-## ⭐ 支持一下作者
-
-- Youtube 频道：[阿杰鲁](https://www.youtube.com/@zaunist)
-    - 帮忙点点关注点点赞，球球你了，你要是不点，我下次还求🙏
 
 ---
 
@@ -51,15 +27,15 @@ Youtube 视频地址： https://youtu.be/XR5TV4C3D5E
   </div>
   <div>
     <h4>🔒 隐私保护</h4>
-    <p>保护您的真实邮箱，避免垃圾邮件和信息泄露</p>
+    <p>访问密钥门禁保护整站，避免被滥用</p>
   </div>
   <div>
     <h4>⚡ 高速接收</h4>
     <p>实时接收邮件，无需刷新页面</p>
   </div>
   <div>
-    <h4>🌐 全球可用</h4>
-    <p>基于Cloudflare构建，全球边缘网络加速</p>
+    <h4>🤖 MCP 支持</h4>
+    <p>内置 MCP Server，AI Agent 可直接创建邮箱、读取邮件</p>
   </div>
   <div>
     <h4>🔄 自动刷新</h4>
@@ -75,91 +51,31 @@ Youtube 视频地址： https://youtu.be/XR5TV4C3D5E
 
 ## 🚀 快速部署
 
-ZMAIL 现在采用全新的一体化部署方式，前端和后端整合为一个 Cloudflare Worker，部署更加简单！
+项目采用一体化部署方式：前端和后端整合为一个 Cloudflare Worker，前端构建产物与 Worker API 一同发布。
 
-### 🎯 部署方式选择
-
-我们提供两种部署方式，您可以根据需求选择：
-
-#### 方式一：一键部署（推荐新手）
-
-<div align="center">
-  <a href="http://deploy.workers.cloudflare.com/?url=https://github.com/zaunist/zmail" target="_blank">
-    <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare" />
-  </a>
-</div>
+### 📋 部署步骤
 
 <div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
-  <h4>✅ 优点：</h4>
-  <ul>
-    <li>部署简单，一键完成</li>
-    <li>无需修改配置文件</li>
-    <li>适合快速体验</li>
-  </ul>
-  
-  <h4>❌ 缺点：</h4>
-  <ul>
-    <li>无法获得后续代码更新</li>
-    <li>需要手动绑定自定义域名</li>
-  </ul>
-  
-  <h4>📋 部署步骤：</h4>
   <ol>
-    <li>点击上方 "Deploy to Cloudflare" 按钮</li>
-    <li>按照页面提示连接您的 GitHub 账户</li>
-    <li>填写应用名称和数据库名称</li>
-    <li>在高级设置 -> 构建变量中设置：
-      <ul>
-        <li><code>VITE_EMAIL_DOMAIN</code>: 您的域名列表，使用 ',' 分割 (例如: mdzz.uk,zaunist.com)</li>
-      </ul>
-    </li>
-    <li>点击"创建和部署"</li>
-    <li>部署完成后，在 Cloudflare Workers 控制面板中绑定自定义域名</li>
-    <li>配置 Cloudflare Email 路由，将邮件转发到您的 Worker</li>
-  </ol>
-</div>
-
-#### 方式二：Fork 后自定义部署（推荐进阶用户）
-
-<div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
-  <h4>✅ 优点：</h4>
-  <ul>
-    <li>可以获得后续代码更新</li>
-    <li>完全自定义配置</li>
-    <li>更好的版本控制</li>
-  </ul>
-  
-  <h4>❌ 缺点：</h4>
-  <ul>
-    <li>需要手动修改配置文件</li>
-    <li>需要一定的技术基础</li>
-    <li>需要手动创建数据库</li>
-  </ul>
-  
-  <h4>📋 部署步骤：</h4>
-  <ol>
-    <li>Fork 本项目到您的 GitHub 账户</li>
-    <li>在 Cloudflare Dashboard 中创建一个 D1 数据库，记住数据库的 name 和 id</li>
+    <li>克隆本仓库到本地</li>
+    <li>在 Cloudflare Dashboard 中创建一个 D1 数据库，记住数据库的 <code>name</code> 和 <code>id</code></li>
     <li>修改根目录下的 <code>wrangler.toml</code> 文件：
       <ul>
         <li>修改 <code>name</code> 为您的应用名称。（可选）</li>
-        <li>修改 <code>routes</code> 中的自定义域名。（必须！默认的worker.dev域名在中国大陆无法访问）</li>
+        <li>修改 <code>routes</code> 中的自定义域名。（必须！默认的 worker.dev 域名在中国大陆无法访问）</li>
         <li>修改 <code>database_name</code> 和 <code>database_id</code> 为您的 D1 数据库信息。（必须！）</li>
-        <li>修改 <code>VITE_EMAIL_DOMAIN</code> 为您的域名列表。（可选，只是方便网页上复制粘贴邮件地址使用，不设置也不影响接收邮件）</li>
+        <li>修改 <code>VITE_EMAIL_DOMAIN</code> 为您的域名列表，多个域名用逗号分割。（可选，只是方便网页上复制粘贴邮件地址，不设置也不影响接收邮件）</li>
       </ul>
     </li>
-    <li>在 Cloudflare Dashboard 中选择 "Workers & Pages"</li>
-    <li>点击 "Create application" -> "Pages" -> "Connect to Git"</li>
-    <li>选择您 Fork 的仓库</li>
-    <li>配置构建设置（通常会自动检测）</li>
-    <li>点击 "Save and Deploy"</li>
+    <li>在 Cloudflare Dashboard → Worker → 设置 → 运行时变量和密钥 中添加密钥 <code>LUCKMAIL_API_KEY</code>（详见 <a href="#-访问密钥api-鉴权">访问密钥</a>）</li>
+    <li>执行 <code>pnpm install && pnpm run deploy</code> 完成部署</li>
     <li>配置 Cloudflare Email 路由，将邮件转发到您的 Worker</li>
   </ol>
 </div>
 
 ### 📧 配置邮件路由
 
-无论选择哪种部署方式，都需要配置 Cloudflare Email 路由：
+无论哪种部署方式，都需要配置 Cloudflare Email 路由：
 
 <div style="background-color: #2d2d2d; color: #ffffff; padding: 15px; border-radius: 5px; margin: 15px 0;">
   <ol>
@@ -179,6 +95,36 @@ ZMAIL 现在采用全新的一体化部署方式，前端和后端整合为一�
 
 ---
 
+## 🔑 访问密钥（API 鉴权）
+
+本项目所有 `/api/*` 接口均受访问密钥保护，未携带有效密钥的请求会被拒绝（401）。
+
+### 密钥配置方式
+
+| 环境 | 配置位置 |
+|------|----------|
+| 生产环境 | Cloudflare Dashboard → Worker → 设置 → 运行时变量和密钥 → 添加变量，类型选 **密钥**，名称 `LUCKMAIL_API_KEY` |
+| 本地开发 | 项目根目录 `.dev.vars` 文件：`LUCKMAIL_API_KEY=你的密钥`（已被 .gitignore 忽略，不会提交） |
+
+### 密钥携带方式（三选一）
+
+```
+Authorization: Bearer <key>     # 推荐（前端 / MCP / 脚本）
+X-API-Key: <key>                # 备用请求头
+?key=<key>                      # 查询参数，仅供 <img>/<iframe>/<a> 等浏览器原生资源加载
+```
+
+### 前端行为
+
+网页首次打开会出现密钥门禁，输入正确密钥后解锁（密钥只保存在本机 localStorage，不会上传）；
+任何请求返回 401 时自动回到门禁重新输入。右上角 🔒 按钮可手动锁定并清除本机密钥。
+
+### 🤖 MCP Server
+
+提供 `mcp/` 目录下的 MCP Server，让 AI Agent 使用密钥操作临时邮箱（创建邮箱 / 获取邮件列表 / 读取邮件内容），
+详见 [mcp/README.md](./mcp/README.md)。
+
+---
 
 ## 💻 本地开发
 
@@ -230,15 +176,12 @@ pnpm run deploy
       <li><strong>Cloudflare Workers</strong> - 边缘计算平台</li>
       <li><strong>Cloudflare D1</strong> - 边缘SQL数据库</li>
       <li><strong>Cloudflare Email Workers</strong> - 邮件处理服务</li>
+      <li><strong>MCP SDK</strong> - AI Agent 接入（Node.js）</li>
     </ul>
   </div>
 </div>
 
 ---
-
-## 👥 贡献指南
-
-欢迎提交Pull Request或Issue来改进这个项目！
 
 ## 📄 许可证
 

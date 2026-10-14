@@ -88,4 +88,7 @@ temp/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-$RECYCLE.BIN/ 
+$RECYCLE.BIN/
+
+# WorkBuddy 本地会话数据
+.workbuddy/

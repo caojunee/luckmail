@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { Env} from './types';
+import { isAuthorized } from './auth';
 import { 
   createMailbox, 
   getMailbox, 
@@ -20,9 +21,30 @@ const app = new Hono<{ Bindings: Env }>();
 app.use('/*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
   maxAge: 86400,
 }));
+
+// API 密钥鉴权中间件：所有 /api/* 请求必须携带有效密钥
+// （Authorization: Bearer <key> / X-API-Key: <key> / ?key=<key>）
+app.use('/api/*', async (c, next): Promise<Response | void> => {
+  // 服务端未配置密钥时明确报错，避免静默拒绝难以排查
+  if (!c.env.LUCKMAIL_API_KEY) {
+    return c.json({
+      success: false,
+      error: '服务端未配置 API 密钥（LUCKMAIL_API_KEY）',
+    }, 503);
+  }
+
+  if (!isAuthorized(c.req.raw, c.env)) {
+    return c.json({
+      success: false,
+      error: '未授权：API 密钥缺失或无效',
+    }, 401);
+  }
+
+  await next();
+});
 
 // 健康检查端点
 app.get('/', (c) => {

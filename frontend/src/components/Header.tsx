@@ -5,6 +5,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 import HeaderMailbox from './HeaderMailbox';
 import Container from './Container';
 import { getEmailDomains, getDefaultEmailDomain, EMAIL_DOMAINS, DEFAULT_EMAIL_DOMAIN } from '../config';
+import { clearApiKey } from '../utils/auth';
 
 interface HeaderProps {
   mailbox: Mailbox | null;
@@ -57,16 +58,18 @@ const Header: React.FC<HeaderProps> = ({
               />
               <div className="ml-3 pl-3 border-l border-muted-foreground/20 flex items-center">
                 <LanguageSwitcher />
-                <a
-                  href="https://github.com/zaunist/zmail"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => {
+                    // 清除本机保存的密钥并刷新页面，门禁重新出现
+                    clearApiKey();
+                    window.location.reload();
+                  }}
                   className="w-8 h-8 flex items-center justify-center rounded-md transition-all duration-200 hover:bg-primary/20 hover:text-primary hover:scale-110 ml-1"
-                  aria-label="GitHub"
-                  title="GitHub"
+                  aria-label={t('auth.lock')}
+                  title={t('auth.lock')}
                 >
-                  <i className="fab fa-github text-base"></i>
-                </a>
+                  <i className="fas fa-lock text-base"></i>
+                </button>
               </div>
             </div>
           )}

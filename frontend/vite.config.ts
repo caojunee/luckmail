@@ -13,7 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://api.mail.mdzz.uk',
+        target: 'http://localhost:8787',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path,

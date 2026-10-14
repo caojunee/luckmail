@@ -20,16 +20,12 @@
     "failed": "Failed",
     "unknown": "Unknown",
     "empty": "No data",
-    "blog": "Blog",
-    "youtube": "YouTube",
-    "xugouMonitor": "Xugou Monitor",
     "privacyPolicy": "Privacy Policy",
     "terms": "Terms of Service",
     "about": "About Us"
   },
   "mailbox": {
-    "createRandom": "Create Random Mailbox",
-    "createCustom": "Create Custom Mailbox",
+    "createRandom": "Create Random Mailbox",    "createCustom": "Create Custom Mailbox",
     "address": "Email Address",
     "customAddress": "Custom Address",
     "customAddressPlaceholder": "Enter custom address",
@@ -91,6 +87,18 @@
   },
   "settings": {
     "language": "Language"
+  },
+  "auth": {
+    "title": "Enter Access Key",
+    "description": "This site is protected by an access key. Enter your key to continue. The key is stored only in this browser.",
+    "placeholder": "Access key",
+    "submit": "Unlock",
+    "verifying": "Verifying key...",
+    "keyRequired": "Please enter the access key",
+    "invalidKey": "Invalid key. Please contact the administrator for a valid key.",
+    "verifyFailed": "Verification failed. Please try again later.",
+    "networkError": "Network error. Cannot reach the server.",
+    "lock": "Lock and clear the key stored in this browser"
   },
   "errors": {
     "generic": "An error occurred, please try again later",

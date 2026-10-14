@@ -11,6 +11,13 @@
   "keywords": [],
   "author": "",
   "packageManager": "pnpm@10.12.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "workerd"
+    ]
+  },
   "devDependencies": {
     "wrangler": "^4.20.5"
   }

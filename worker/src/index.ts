@@ -1,6 +1,7 @@
 import { Env } from './types';
 import { initializeDatabase, cleanupExpiredMailboxes, cleanupExpiredMails, cleanupReadMails } from './database';
 import { handleEmail } from './email-handler';
+import { isAuthorized } from './auth';
 import app from './routes';
 
 // 导出Worker处理函数
@@ -13,8 +14,18 @@ export default {
       // 自动初始化数据库（如果需要）
       await initializeDatabase(env.DB);
       
-      // 手动初始化数据库（如果请求中包含init参数）
+      // 手动初始化数据库（如果请求中包含init参数，需要携带 API 密钥）
       if (url.searchParams.has('init')) {
+        if (!isAuthorized(request, env)) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: '未授权：API 密钥缺失或无效'
+          }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
         return new Response(JSON.stringify({ 
           success: true, 
           message: '数据库初始化成功' 

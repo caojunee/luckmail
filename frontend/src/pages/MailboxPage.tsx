@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import EmailList from '../components/EmailList';
 import EmailDetail from '../components/EmailDetail';
 import MailboxInfo from '../components/MailboxInfo';
-import { API_BASE_URL } from '../config';
+import { getMailbox, deleteMailbox } from '../utils/api';
 import { MailboxContext } from '../contexts/MailboxContext';
 
 const MailboxPage: React.FC = () => {
@@ -45,12 +45,14 @@ const MailboxPage: React.FC = () => {
     const fetchMailbox = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`${API_BASE_URL}/api/mailboxes/${address}`);
-        
-        if (!response.ok) {
-          if (response.status === 404) {
+        const result = await getMailbox(address);
+
+        if (result.success && result.mailbox) {
+          setMailbox(result.mailbox);
+        } else {
+          if (result.notFound) {
             setErrorMessage(t('mailbox.invalidAddress'));
-            
+
             // 3秒后导航到首页
             if (errorTimeoutRef.current) {
               window.clearTimeout(errorTimeoutRef.current);
@@ -60,14 +62,7 @@ const MailboxPage: React.FC = () => {
             }, 3000);
             return;
           }
-          throw new Error('Failed to fetch mailbox');
-        }
-        
-        const data = await response.json();
-        if (data.success) {
-          setMailbox(data.mailbox);
-        } else {
-          throw new Error(data.error || 'Unknown error');
+          throw new Error(result.error ? String(result.error) : 'Failed to fetch mailbox');
         }
       } catch (error) {
         setErrorMessage(String(error));
@@ -92,18 +87,10 @@ const MailboxPage: React.FC = () => {
     if (!address) return;
     
     try {
-      const response = await fetch(`${API_BASE_URL}/api/mailboxes/${address}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete mailbox');
-      }
-      
-      const data = await response.json();
-      if (data.success) {
+      const result = await deleteMailbox(address);
+      if (result.success) {
         setSuccessMessage(t('mailbox.deleteSuccess'));
-        
+
         // 2秒后导航到首页
         if (successTimeoutRef.current) {
           window.clearTimeout(successTimeoutRef.current);
@@ -112,7 +99,7 @@ const MailboxPage: React.FC = () => {
           navigate('/');
         }, 2000);
       } else {
-        throw new Error(data.error || 'Unknown error');
+        throw new Error(result.error ? String(result.error) : 'Failed to delete mailbox');
       }
     } catch (error) {
       setErrorMessage(t('mailbox.deleteFailed'));

@@ -4,6 +4,8 @@ import { D1Database } from '@cloudflare/workers-types';
 export interface Env {
   DB: D1Database;
   VITE_EMAIL_DOMAIN?: string;
+  /** API 访问密钥，所有 /api/* 接口必须携带，未配置时拒绝所有 API 请求 */
+  LUCKMAIL_API_KEY?: string;
 }
 
 // 邮箱类型
